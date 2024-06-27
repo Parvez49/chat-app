@@ -1,0 +1,30 @@
+
+# python manage.py runserver 0.0.0.0:8000 --insecure // to serve static locally
+
+
+
+
+# ---------------- Docker ------------------
+
+docker build .   
+docker-compose build
+
+
+docker-compose run --rm projectname sh -c "flake8"
+docker-compose run --rm projectname sh -c "django-admin startproject ProjectName ."
+docker-compose run --rm projectname sh -c "python manage.py startapp app"
+
+docker-compose up    # start service
+
+# add new packages or dependencies
+docker-compose down
+docker-compose build
+
+
+# if migration problem occur:
+docker volume ls
+docker-compose down
+docker volume rm volume
+docker-compose run --rm projectname sh -c "python manage.py wait_for_db && python manage.py migrate"
+
+
