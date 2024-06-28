@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  api:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    command: gunicorn backend.wsgi:application --bind 0.0.0.0:8000
+    expose:
+      - 8000
+    env_file:
+      - ./backend/.env/.env.prod
+    depends_on:
+      - db
+    volumes:
+      - static_volume:/home/app/web/staticfiles
+      - media_volume:/home/app/web/mediafiles
+  
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  db:
+    image: postgres:15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - ./backend/.env/.env.prod.db
+
+  nginx:
+    build: ./nginx
+    ports:
+      - 1337:80
+    depends_on:
+      - api
+    volumes:
+      - static_volume:/home/app/web/staticfiles
+      - media_volume:/home/app/web/mediafiles
+
+  web:
+    # container_name: web
+    stdin_open: true
+    environment:
+      - ENV_VARIABLE=true
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+    ports:
+      - 5000:80
+    volumes:
+      - /app/node_modules
+      - .:/app
+      # - ./public/assets:/app/public/assets
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
+  redis_data:

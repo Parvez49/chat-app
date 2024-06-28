@@ -1,37 +1,73 @@
-version: "3.9"
+version: '3.8'
 
 services:
-  projectname: # smalll letter default image name
-    build:
-      context: .
-      args:
-        - DEV=true
-    ports:
-      - "8000:8000"
+  api:
+    build: ./backend
+    command: python manage.py runserver 0.0.0.0:8000
     volumes:
-      - ./ProjectName:/ProjectName:z
-    #user: user1
-    command: >
-      sh -c "python manage.py wait_for_db &&
-             python manage.py migrate &&
-             python manage.py runserver 0.0.0.0:8000"
-    
-    environment:
-      - DB_HOST=db
-      - DB_NAME=devdb
-      - DB_USER=devuser
-      - DB_PASS=changeme
+      - ./backend/:/usr/src/app/
+    ports:
+      - 8000:8000
+    env_file:
+      - ./backend/.env/.env.dev
     depends_on:
       - db
 
-  db:
-    image: postgres:13-alpine
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
     volumes:
-      - dev-db-data:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_DB=devdb
-      - POSTGRES_USER=devuser
-      - POSTGRES_PASSWORD=changeme
+      - redis_data:/data
+
+  db:
+    image: postgres:15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment: 
+      - POSTGRES_USER=USER
+      - POSTGRES_PASSWORD=PASSWORD 
+      - POSTGRES_DB=DEV 
   
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@email.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+
+
+  web:
+    # container_name: web
+    stdin_open: true
+    environment:
+      - ENV_VARIABLE=true
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile   # .dev for development purpose
+    ports:
+      - 5000:3000   # - '3000:80' for production
+    #  - 7007:80
+    volumes:
+      - /app/node_modules
+      - ./frontend:/app
+      # - ./public/assets:/app/public/assets
+
+       
+  # tests:
+  #   stdin_open: true
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   volumes:
+  #     - /app/node_modules
+  #     - ./frontend:/app
+  #   command: ['npm', 'run', 'test']
+
 volumes:
-  dev-db-data:
+  postgres_data:
+  redis_data:

@@ -49,7 +49,7 @@ const Chat = ({selectedFriend}) => {
 
     useEffect(() => {
         if (selectedFriend){
-            const newSocket = new WebSocket(`ws://localhost:8000/ws/chat/${currentLoggedUser.id}/${selectedFriend}/`);
+            const newSocket = new WebSocket(`ws://localhost:1337/ws/chat/${currentLoggedUser.id}/${selectedFriend}/`);
             setSocket(newSocket);
 
             newSocket.onmessage = (event) => {
@@ -78,6 +78,7 @@ const Chat = ({selectedFriend}) => {
     }
 
     const handleSendMessage = (e) =>{
+        console.log("****************SEnd Data****************")
         // const data={
         //     user2:currentUser.id,
         //     message:message
@@ -99,7 +100,8 @@ const Chat = ({selectedFriend}) => {
             user2:selectedFriend,
             message: message,
         };
-        // socket.send(JSON.stringify(data));
+        
+        socket.send(JSON.stringify(data));
         setMessage('');
     }
     return (

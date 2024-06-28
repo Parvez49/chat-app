@@ -25,8 +25,9 @@ const Login = () => {
     }
 
     const handleSubmit = (e)=>{
+        console.log("******************************8")
         e.preventDefault()
-        console.log(formData)
+        console.log("formData",formData)
         dispatch(login(formData))
     }
 

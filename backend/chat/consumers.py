@@ -25,6 +25,9 @@ class ChatConsumer(WebsocketConsumer):
         
         # Group name must be a valid unicode string containing only ASCII alphanumerics, hyphens, or periods.
         self.group_name = f"chat_{min(self.user2_id,self.user1_id)}_{max(self.user1_id,self.user2_id)}"
+        
+        print("***************************")
+        print(self.group_name)
 
         # connection has to be accepted
         self.accept()
@@ -43,6 +46,8 @@ class ChatConsumer(WebsocketConsumer):
 
     def receive(self, text_data=None, bytes_data=None):
         text_data_json = json.loads(text_data)
+        print("*****************Receive**************")
+        print(text_data)
         user1 = User.objects.get(id=text_data_json['user1'])
         user2 = User.objects.get(id=text_data_json['user2'])
         obj= Conversation.objects.create(user1=user1,user2=user2,message=text_data_json['message'])
@@ -59,5 +64,6 @@ class ChatConsumer(WebsocketConsumer):
         )
 
     def chat_message(self, event):
+        print(event['message'])
         message = event['message']
         self.send(text_data=json.dumps(message))

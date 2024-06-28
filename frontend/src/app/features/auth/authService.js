@@ -8,11 +8,12 @@ const config = {
     }
 }
 
-const  BACKEND_DOMAIN = "http://127.0.0.1:8000";
+const  BACKEND_DOMAIN = process.env.REACT_APP_BACKEND;
 
 const LOGIN_URL = `${BACKEND_DOMAIN}/account/login`
 
 const login = async (userData) =>{
+    console.log("*************Login URL***********",BACKEND_DOMAIN)
     const response = await axios.post(LOGIN_URL,userData,config)
     if (response.data){
         localStorage.setItem("access_token",JSON.stringify(response.data.token.access))
