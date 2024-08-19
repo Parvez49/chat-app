@@ -11,13 +11,6 @@ ChatApp is a real-time communication platform built using Django on the backend 
 
 ## Installation
 
-### Prerequisites
-
-- Python 3.x
-- Node.js (v14 or later)
-- npm (v6 or later) or yarn
-- Django 3.x or later
-
 ### Backend Setup
 
 1. **Clone the repository**
