@@ -16,7 +16,7 @@ ChatApp is a real-time communication platform built using Django on the backend 
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/yourusername/ChatApp.git
+   git clone https://github.com/Parvez49/chat-app.git
    cd ChatApp/backend
 2. Create a virtual environment and activate it
    ```
